@@ -143,6 +143,7 @@ len(stfset)  # 107
 len(ptflist)  # 7
 len(atfdict)  # 4
 
+
 # examines the list of TF's with problem
 for tf in ptflist:
 	contenturl = ''.join(["http://www.yeastgenome.org/cgi-bin/locus.fpl?locus=", tf])
