@@ -1,0 +1,39 @@
+Report Outline
+15 - 25 pages
+
+Bio Intro: 1-1.5 pages
+Taly
+
+
+Intro to previous computational work on coop. TF
+Intro to model
+Intro to our count stat
+Math prop. of stat
+
+Jorge
+(3 pages)
+
+Simulations of count stats
+Jorge & Angie 
+3 pages
+
+intro to data
+empirical results of count stat
+w/ block bootstrap for segmentation
+Jorge, Fu, Angie
+3 pages
+
+bio interpretation
+Taly
+1 page
+
+network intro
+network results
+Fu
+3-4 pages
+
+bio interpretation
+Taly
+1 page
+
+Limitation of Approaches & future directions
