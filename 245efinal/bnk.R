@@ -56,3 +56,15 @@ bnk <- function(A, n, K, maxit = 100, thresh = 0.1) {
   result <- list(theta = theta.new, loglik = L.new, q = q)
   return(result)
 }
+
+bnk.full <- function(A, n, K, maxit = 100, thresh = 0.1, maxrep = 30) {
+  storage <- vector(maxrep, mode="list")
+  loglik <- rep(0, maxrep)
+  for (i in 1:maxrep) {
+    temp <- bnk(A, n, K, maxit = 100, thresh = 0.1)
+    storage[[i]] <- temp
+    loglik[i] <- temp$loglik
+  }
+  ind <- which.max(loglik)
+  return(storage[[ind]])
+}
