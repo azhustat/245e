@@ -12,19 +12,20 @@ load(file="tfbs.RData")
 
 pairindex <- t(combn(length(tfvec), 2)) 
 
-load("out.RData")
-length(out)  # 6903
+load("obsTn.RData")
+length(obsTn)  # 6903
 
-summary(out)
+summary(obsTn)
 #     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-# 0.000e+00 0.000e+00 0.000e+00 9.947e-05 0.000e+00 2.609e-02
+# 0.005756 0.057560 0.138100 0.196200 0.282000 0.857600 
 
-sum(out != 0)  # 1193
+
+sum(obsTn != 0)  # 1193
 
 # checks if the list of TF names are in alphabetical order
 sum(tfvec == sort(tfvec))  # 118, check
 
-results <- sapply(which(out != 0), function(i) {
+results <- sapply(which(obsTn != 0), function(i) {
 	pair <- tfvec[pairindex[i, ]]
 	return(paste(pair, collapse="-"))
 })
