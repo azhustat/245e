@@ -1,0 +1,124 @@
+%% LyX 2.0.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=3cm}
+\setlength{\parindent}{0bp}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{babel}
+\usepackage{xunicode}
+\begin{document}
+The simulated pairwise interactions of transcription factors (TFs)
+obtained in Chapter \_\_ naturally induces a network, thus we can
+gain new insights to higher-order TF interactions and transcription
+pathways by clustering such network. In choosing the clustering algorithm,
+we need to take into consideration the multi-membership feature of
+the network--that is, one TF may participate in multiple complexes.
+This feature limits the choice of algorithms, as most common clustering
+algorithms assign each nodes to a single cluster. In this study we
+will implement an framework proposed by Ball, Newman, and Karrer {[}cite{]}.
+\\
+
+
+
+\subsubsection*{Multimembership Clustering Framework}
+
+The idea presented in {[}cite{]} is to build a generative probabilistic
+model for the links between nodes. Suppose there are $n$ nodes and
+$K$ clusters in the network. It's worth mentioning that in this framework,
+each node is associated with $K$ parameters, denoted $\theta_{i1},...,\theta_{iK}$,
+in which $\theta_{iz}$ is interpreted as TF $i$'s affinity to bind
+in cluster $z$. The edge between TF $i$ and $j$ in the network
+are formed according to Poisson distribution with rate $\sum_{z}\theta_{iz}\theta_{jz}$,
+and all edges are formed independently. Thus we can write the pseudo-likelihood
+of the network to be
+\[
+\mathcal{L}\left(A,\theta\right)=\prod_{i,j}\left(\sum_{z}\theta_{iz}\theta_{jz}\right)^{A_{ij}}e^{-\sum_{z}\theta_{iz}\theta_{jz}}
+\]
+
+
+and the log likelihood is
+\[
+l\left(A,\theta\right)=\sum_{i,j}A_{ij}\log\left(\sum_{z}\theta_{iz}\theta_{jz}\right)-\sum_{i,j,z}\theta_{iz}\theta_{jz}
+\]
+
+
+If we were to maximize this likelihood with respect to $\theta_{iz}$,
+we will get a difficult system of non-linear equations. One way to
+side-step this obstacle is to introduce an auxillary variable $q_{ij}\left(z\right)$
+with the constraint that $\sum_{i,j}q_{ij}\left(z\right)=1$ and apply
+Jensen's inequality to get
+\begin{eqnarray}
+l\left(A,\theta\right) & \geq & \sum_{i,j}A_{ij}\sum_{z}q_{ij}\left(z\right)\log\left(\frac{\theta_{iz}\theta_{jz}}{q_{ij}\left(z\right)}\right)-\sum_{i,j,z}\theta_{iz}\theta_{jz}\\
+ & = & \sum_{i,j,z}\left[A_{ij}q_{ij}\left(z\right)\log\left(\frac{\theta_{iz}\theta_{jz}}{q_{ij}\left(z\right)}\right)-\theta_{iz}\theta_{jz}\right]\nonumber 
+\end{eqnarray}
+This is a lower bound of the original likelihood, we will make a leap
+of faith and assume it is sufficient just to maximize the lower bound.\\
+\\
+It is not hard to see that equality holdes in $\left(1\right)$ only
+if
+\begin{equation}
+q_{ij}\left(z\right)=\frac{\theta_{iz}\theta_{jz}}{\sum_{z}\theta_{iz}\theta_{jz}}
+\end{equation}
+
+
+Thus holding $\theta_{iz}$'s constant, the likelihood is maximized
+at $\left(2\right)$.\\
+
+
+On the other hand, if we hold $q_{ij}\left(z\right)$ constant, then
+$\theta_{iz}$ are maximized at 
+\begin{eqnarray*}
+\theta_{iz} & = & \frac{\sum_{j}A_{ij}q_{ij}(z)}{\sum_{i}\theta_{iz}}\\
+\sum_{i}\theta_{iz} & = & \frac{\sum_{i,j}A_{ij}q_{ij}(z)}{\sum_{i}\theta_{iz}}\\
+\sum_{i}\theta_{iz} & = & \sqrt{\sum_{i,j}A_{ij}q_{ij}(z)}
+\end{eqnarray*}
+
+
+Thus
+\begin{equation}
+\theta_{iz}=\frac{\sum_{j}A_{ij}q_{ij}(z)}{\sqrt{\sum_{i,j}A_{ij}q_{ij}(z)}}
+\end{equation}
+
+
+Therefore, we have a simple EM-like recursion for the following form:
+\begin{enumerate}
+\item randomly initialize $\theta_{iz},\forall i,z$
+\item update $q_{ij}\left(z\right)$ using $\left(2\right)$
+\item update $\theta_{iz}$ using $\left(3\right)$ 
+\item repeat steps 2 and 3 until convergence of the likelihood.
+\end{enumerate}
+In the end we are interested in the final $\theta_{iz}$'s. The result
+will be of the form
+\[
+\theta=\left[\begin{array}{cccc}
+\theta_{11} & \theta_{12} & \cdots & \theta_{1K}\\
+\theta_{21} & \theta_{22} & \cdots & \theta_{2K}\\
+\theta_{31} & \theta_{32} & \cdots & \theta_{3K}\\
+\vdots &  &  & \vdots\\
+\theta_{n1} & \theta_{n2} & \cdots & \theta_{nK}
+\end{array}\right]
+\]
+
+
+We can normalize each row by the sum of each row, i.e let $\theta_{i}=\sum_{z}\theta_{iz}$,
+let
+\[
+M=\left[\begin{array}{cccc}
+\frac{1}{\theta_{1}}\\
+ & \frac{1}{\theta_{2}}\\
+ &  & \ddots\\
+ &  &  & \frac{1}{\theta_{n}}
+\end{array}\right]
+\]
+and 
+\[
+\tilde{\theta}=M\theta
+\]
+
+
+Then entries $\tilde{\theta}_{iz}$ can be interpretated as the probability
+that the TF $i$ belongs to the cluster $z$.
+\end{document}
